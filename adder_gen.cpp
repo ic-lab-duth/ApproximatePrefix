@@ -15,13 +15,16 @@ using namespace std;
 
 vector<list<short int>> solutions;
 vector<short int> fo_vector;
-short int index = 3;        //starting adder
-short int max_index;   //final adder
-int approx;             //how many bits my adder looks back
-int level;              //parameter for level pruning
-int delta_pruning;   //parameter for dynamic size pruning
-int repeat;          //parameter for repeatability pruning
-int max_fo;      //parameter for max fan-out pruning
+short int index = 3;        // starting adder
+short int max_index;        // final adder
+int approx;                 // how many bits my adder looks back
+int split_position;         // position to split for split accuracy
+int approx_low;             // how many bits my adder looks back in the low part
+int approx_high;            // how many bits my adder looks back in the high part
+int level;                  // parameter for level pruning
+int delta_pruning;          // parameter for dynamic size pruning
+int repeat;                 // parameter for repeatability pruning
+int max_fo;                 // parameter for max fan-out pruning
 string nameFile;
 
 int global_counter;
@@ -344,9 +347,24 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
 
   lsb = LSB(nodeList, recentNode);
 
-  //all bits are approximate:
-  if (index < approx) k = index;
-  else k = approx;
+  // if you are at the base configuration:
+  if (split_position == -1) {
+    if (index < approx) k = index;
+    else k = approx;
+  } else {
+    if (index <= split_position) {
+      // if you are in the low order part and under the approx spot, you are fully accurate
+      // else take the approx_low as your min carry chain
+      if (index < approx_low) k = index;
+      else k = approx_low;
+    } else {
+      // if you are in the high order part and under the approx spot, you are fully accurate until the split position
+      // else take the approx_high as your min carry chain
+      if (index - split_position < approx_high) k = index - split_position;
+      else k = approx_high;
+    }
+  }
+  
 
   if (*recentNode == index && lsb == 0) {
     if (!flag4){
@@ -397,7 +415,9 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
     fo_cnt ++;
   }
 
-  if (depth(nodeList, newIter) > level || R == repeat + 2 || nodeList.size() > min_size+delta_pruning) {
+  // last check sees if you are in the high part of split accuracy but you are looking to the low accuracy part
+  if (depth(nodeList, newIter) > level || R == repeat + 2 || nodeList.size() > min_size+delta_pruning || 
+      (split_position != -1 && index > split_position && lsb2 < split_position)) {
     fo_cnt = 0; //for fanout pruning
     fanout_erase(nodeList, newIter); //for fanout calculation
     nodeList.erase(newIter);
@@ -652,6 +672,7 @@ void print_csv(multiset<list<short int>, ListCmp>& adders_to_report) {
     max_level = 0;
     max_fanout = 0;
     adder_index++;
+
   }
   file.close();
   cout << "Wrote results in " << filename << endl;
@@ -688,8 +709,14 @@ void print_ER(list<short int>& adder, vector<float>& error_rates) {
         a = dist(gen);
         b = dist(gen);
       } else {
-        a = (short) round(dist_norm(gen));
-        b = (short) round(dist_norm(gen));
+        a = round(dist_norm(gen));
+        b = round(dist_norm(gen));
+        while(a > (long) pow(2, max_index) - 1 || a < (long) -pow(2, max_index)) {
+          a = round(dist_norm(gen));
+        }
+        while(b > (long) pow(2, max_index) - 1 || b < (long) -pow(2, max_index)) {
+          b = round(dist_norm(gen));
+        }
       }
       int sum = add.calculate_sum(a, b);
       int true_sum = a + b;
@@ -697,7 +724,7 @@ void print_ER(list<short int>& adder, vector<float>& error_rates) {
       if (sum != true_sum) {
         errors++;
         if (true_sum != 0) {
-          re += abs(((sum - true_sum)/true_sum));
+          re += abs((((float) sum - true_sum)/true_sum));
         }
       }
     }
@@ -824,26 +851,60 @@ void clean_files() {
 
 int main(int argc, char** argv) {
 
-  if(argc != 7){
-    cout << "Wrong argument number! \n Provide 6 command line arguments in the following order:" << endl;
-    cout << "bit width, minimum carry chain, maximum levels, maximum fanout, number of adders to report, verilog file name" << endl;
+  if(argc != 7 && argc != 9){
+    cout << "Wrong argument number! \nProvide 6 or 8 command line arguments in the following order depending on the version you want to run:" << endl;
+    cout << "1. For the base method:" << endl;
+    cout << "   bit width, minimum carry chain, maximum levels, maximum fanout, number of adders to report, verilog file name" << endl;
+    cout << "2. For the split accuracy method:" << endl;
+    cout << "   bit width, split position, minimum carry chain low part, minimum carry chain high part, maximum levels, maximum fanout, number of adders to report, verilog file name" << endl;
     return 1;
   }
 
   auto start = chrono::steady_clock::now();
 
-  max_index = stoi(argv[1]) - 1;
-  approx = stoi(argv[2]) - 1;
-  level = stoi(argv[3]);
+  if (argc == 7) {
+    max_index = stoi(argv[1]) - 1;
+    approx = stoi(argv[2]) - 1;
+    level = stoi(argv[3]);
+    max_fo = stoi((argv[4]));
+    adders_to_keep = stoi(argv[5]);
+    nameFile = argv[6];
+    split_position = -1;
+    approx_low = -1;
+    approx_high = -1;
+    if (approx <= 0) {
+      std::cout << "All argument values have to be positive" << std::endl;
+      return 1;
+    }
+  } else if (argc == 9) {
+    max_index = stoi(argv[1]) - 1;
+    split_position = stoi(argv[2]);
+    approx_low = stoi(argv[3]) - 1;
+    approx_high = stoi(argv[4]) - 1;
+    approx = -1;
+    level = stoi(argv[5]);
+    max_fo = stoi((argv[6]));
+    adders_to_keep = stoi(argv[7]);
+    nameFile = argv[8];
+    if (split_position <= 0 || approx_low <= 0 || approx_high <= 0) {
+      std::cout << "All argument values have to be positive" << std::endl;
+      return 1;
+    }
+  }
+
+  if (max_index <= 0 || level <= 0 || max_fo <= 0) {
+    std::cout << "All argument values have to be positive" << std::endl;
+    return 1;
+  }
+
   delta_pruning = round(0.7 * (max_index + 1));
-  max_fo = stoi((argv[4]));
   repeat = 1;
-  adders_to_keep = stoi(argv[5]);
+
   if (adders_to_keep > 100000) {
     cout << "Maximum number of solutions that can be reported: 100.000" << std::endl;
     return 1;
   }
-  nameFile = argv[6];
+  
   starting_acc = 0;
   max_per_size = 500;
   global_counter = 0;
