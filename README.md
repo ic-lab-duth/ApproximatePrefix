@@ -32,7 +32,7 @@ The method generates a variety of approximate parallel prefix adders, based on a
 Selecting a different minimum carry chain length constrains. i.e. Minimum carry chain length 8, the solution  of Figure 1(b) gets generated.
 
 <p align="center">
-    <img src=".\figures\chains.png" alt="chains" style="zoom:20%;" />
+    <img src="./figures/chains.png" alt="chains" style="zoom:20%;" />
 
 <p align = "center">
     <b>Figure 1:</b> Adder solutions with the minimum number of operators for a minimum carry chain constraints of (a) 11 and (b) 8.
@@ -55,7 +55,7 @@ Figure 2 shows an example of a split-accuracy parallel prefix adder that has a l
 - Fanout: 3
 
 <p align="center">
-    <img src=".\figures\split.png" alt="split" style="zoom:15%;" />
+    <img src="./figures/split.png" alt="split" style="zoom:15%;" />
 
 
 <p align = "center">
