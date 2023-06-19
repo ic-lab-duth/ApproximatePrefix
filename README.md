@@ -6,16 +6,19 @@ This GitHub repository contains the implementation of our method for generating 
 
 When adding two $n$-bit binary numbers $A = A_{n-1}A_{n-2}\ldots A_0$ and $B = B_{n-1}B_{n-2}\ldots B_0$, the sum bit $S_i$ at the $i$-th bit position is computed by combining the modulo-2 sum (exclusive OR) of bits $A_i$ and $B_i$, i.e. $H_i = A_i \oplus B_i$ (XOR), and the carry $C_{i-1}$ computed in the previous bit position: 
 
-| $S_i = H_i \oplus C_{i-1}$ |
-| :------------------------: |
+$$S_i = H_i \oplus C_{i-1}$$
 
-The carry out of the $i$-th bit position $C_i$ is computed using the local carry generate $G_i = A_i\, B_i$ (AND) and propagate bits $P_i = A_i + B_i$ (OR) and the fundamental recursive carry propagation formula: $C_i  = G_{i} + P_{i}\, C_{i-1}$.
+The carry out of the $i$-th bit position $C_i$ is computed using the local carry generate $G_i = A_i\, B_i$ (AND) and propagate bits $P_i = A_i + B_i$ (OR) and the fundamental recursive carry propagation formula: 
+
+$$C_i  = G_{i} + P_{i}\, C_{i-1}.$$
 
 In **Parallel Prefix Adders** the carry computation is transformed to a prefix problem by using the associative operator $\circ$ which associates pairs of generate and propagate bits as follows:
 
 $$(G, P) \circ (G', P') = (G + P\, G', P\, P').$$ 
 
-In general $C_{i}=G_{i:j}$, where $(G_{i:j}, P_{i:j})=(G_i,P_i)\circ (G_{i-1},P_{i-1})\circ \ldots \circ (G_j,P_j)$.
+In general $C_{i}=G_{i:j}$, where 
+
+$$(G_{i:j}, P_{i:j})=(G_i,P_i)\circ (G_{i-1},P_{i-1})\circ \ldots \circ (G_j,P_j).$$
 
 If $j$ equals to $0$ then the carry computation at the $i$-th position $C_{i}$ is accurate. On the contrary, when $j$ is greater than zero then $C_{i}$ becomes inaccurate resulting in an approximate adder architecture. The difference $(i-j)$ defines the length of the carry chain in the adder.
 
@@ -29,11 +32,12 @@ The method generates a variety of approximate parallel prefix adders, based on a
 Selecting a different minimum carry chain length constrains. i.e. Minimum carry chain length 8, the solution  of Figure 1(b) gets generated.
 
 <p align="center">
-    <img src=".\figures\chains.png" alt="mcc_11" style="zoom:20%;" />
+    <img src=".\figures\chains.png" alt="chains" style="zoom:20%;" />
 
 <p align = "center">
-    <b>Figure 1:</b> The solutions with the minimum number of operators for a minimum carry chain constraints of (a) 11 and (b) 8.
+    <b>Figure 1:</b> Adder solutions with the minimum number of operators for a minimum carry chain constraints of (a) 11 and (b) 8.
 </p>
+
 
 The proposed method can generate a variety of different adders by carefully selecting the constraints. In addition, for the same constraints the method can produce multiple different solutions by defining the number of adders to be generated.
 
@@ -51,7 +55,8 @@ Figure 2 shows an example of a split-accuracy parallel prefix adder that has a l
 - Fanout: 3
 
 <p align="center">
-    <img src=".\figures\split.png" alt="mcc_11" style="zoom:15%;" />
+    <img src=".\figures\split.png" alt="split" style="zoom:15%;" />
+
 
 <p align = "center">
     <b>Figure 2:</b> A split-accuracy parallel prefix adder with 8 bit accurate high part and 8 bit inaccurate low part.
