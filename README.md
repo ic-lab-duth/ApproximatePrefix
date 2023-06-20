@@ -16,7 +16,7 @@ In **Parallel Prefix Adders** the carry computation is transformed to a prefix p
 
 $$(G, P) \circ (G', P') = (G + P\, G', P\, P').$$ 
 
-Groups of carry generate and propagate terms $(G_{i:j},P_{i,j}$ are produced as follows:
+Groups of carry generate and propagate terms $(G_{i:j},P_{i,j})$ are produced as follows:
 
 $$(G_{i:j}, P_{i:j})=(G_i,P_i)\circ (G_{i-1},P_{i-1})\circ \ldots \circ (G_j,P_j)$$
 
