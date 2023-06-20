@@ -16,11 +16,11 @@ In **Parallel Prefix Adders** the carry computation is transformed to a prefix p
 
 $$(G, P) \circ (G', P') = (G + P\, G', P\, P').$$ 
 
-In general $C_{i}=G_{i:j}$, where 
+Groups of carry generate and propagate terms $(G_{i:j},P_{i,j}$ are produced as follows:
 
-$$(G_{i:j}, P_{i:j})=(G_i,P_i)\circ (G_{i-1},P_{i-1})\circ \ldots \circ (G_j,P_j).$$
+$$(G_{i:j}, P_{i:j})=(G_i,P_i)\circ (G_{i-1},P_{i-1})\circ \ldots \circ (G_j,P_j)$$
 
-If $j$ equals to $0$ then the carry computation at the $i$-th position $C_{i}$ is accurate. On the contrary, when $j$ is greater than zero then $C_{i}$ becomes inaccurate resulting in an approximate adder architecture. The difference $(i-j)$ defines the length of the carry chain in the adder.
+Carry $C_i$ is accurate when $C_i = G_{i:0}$. On the contrary, when $C_i = G_{i:j}$ with $j > 0$, $C_{i}$ is computed inaccurately thus resulting in an approximate adder architecture. The difference $(i-j)$ defines the length of the carry chain for each bit position of the adder. 
 
 The method generates a variety of approximate parallel prefix adders, based on a set of constraints that refer to the size of the adder, the minimum carry chain length, the number of logic levels and the maximum fanout of each operator. The example of Figure 1(a) is an approximate parallel prefix adder with a minimum carry chain constraint of 11. For completeness, the constraints that result in the generation of this adder are:
 
