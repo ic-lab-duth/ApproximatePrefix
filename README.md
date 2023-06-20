@@ -10,7 +10,7 @@ $$S_i = H_i \oplus C_{i-1}$$
 
 The carry out of the $i$-th bit position $C_i$ is computed using the local carry generate $G_i = A_i\, B_i$ (AND) and propagate bits $P_i = A_i + B_i$ (OR) and the fundamental recursive carry propagation formula: 
 
-$$C_i  = G_{i} + P_{i}\, C_{i-1}.$$
+$$C_i  = G_{i} + P_{i} C_{i-1}$$
 
 In **Parallel Prefix Adders** the carry computation is transformed to a prefix problem by using the associative operator $\circ$ which associates pairs of generate and propagate bits as follows:
 
