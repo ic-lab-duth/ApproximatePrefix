@@ -14,7 +14,7 @@ $$C_i  = G_{i} + P_{i} C_{i-1}$$
 
 In **Parallel Prefix Adders** the carry computation is transformed to a prefix problem by using the associative operator $\circ$ which associates pairs of generate and propagate bits as follows:
 
-$$(G, P) \circ (G', P') = (G + P\, G', P\, P').$$ 
+$$(G, P) \circ (G', P') = (G + P G', P P').$$ 
 
 Groups of carry generate and propagate terms $(G_{i:j},P_{i,j})$ are produced as follows:
 
