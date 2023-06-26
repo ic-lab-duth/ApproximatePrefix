@@ -116,42 +116,12 @@ For example, if we want to generate 16 bit adders, with 11 minimum carry chain, 
 The output of the console would be the following:
 
 ```
-Generating solutions for 4 bits: 5 solutions generated.
-Generating solutions for 5 bits: 16 solutions generated.
-Generating solutions for 6 bits: 57 solutions generated.
-Generating solutions for 7 bits: 232 solutions generated.
-Generating solutions for 8 bits: 947 solutions generated.
-Generating solutions for 9 bits: 3923 solutions generated.
-Generating solutions for 10 bits: 14150 solutions generated.
-Generating solutions for 11 bits: 31184 solutions generated.
-Generating solutions for 12 bits: 39029 solutions generated.
-Generating solutions for 13 bits: 39726 solutions generated.
-Generating solutions for 14 bits: 42748 solutions generated.
-Generating solutions for 15 bits: 39655 solutions generated.
-Generating solutions for 16 bits: 34138 solutions generated.
 Generating csv file...
 Wrote results in approx_adder_report.csv
 Generating verilog files...
 Wrote verilog files in approx_adder_x.sv
-Final solution number after pruning: 28439
-adder size -> # solutions with this size
-29 -> 1
-30 -> 22
-31 -> 194
-32 -> 561
-33 -> 1306
-34 -> 2543
-35 -> 3257
-36 -> 3814
-37 -> 3635
-38 -> 3934
-39 -> 4488
-40 -> 4684
-elapsed time: 0.254714m
-elapsed time: 15.2828s
+elapsed time: 10.0622s
 ```
-
-In the end, the number of adders found for each operator number is also reported to give a better sense of the quality of solutions generated.
 
 The verilog of the 10 smallest adders will be generated in the files ``approx_adder_0.sv``, ``approx_adder_1.sv`` ... ``approx_adder_9.sv``.
 
@@ -160,17 +130,45 @@ The characteristics of those 10 adders can be found in ``approx_adder_report.csv
 ```
 adder,level,min-carry-chain,max-carry-chain,max-fanout,#operators,EF-uniform,MRE-uniform,EF-mixed,MRE-mixed
 
-approx_adder_0,4,11,14,5,29,0.00018,0.32404,0.00468,42.7644
-approx_adder_1,4,11,14,5,30,0.00018,0.16386,0.005,47.7997
-approx_adder_2,4,11,14,5,30,0.00014,1.11416,0.0042,40.3782
-approx_adder_3,4,11,14,5,30,0.00024,0.81924,0.00436,43.1678
-approx_adder_4,4,11,14,5,30,0.00014,1.07222,0.00408,38.2656
-approx_adder_5,4,11,14,5,30,0.00024,1.07176,0.004,40.607
-approx_adder_6,4,11,14,4,30,0.00012,0.13832,0.00414,40.0159
-approx_adder_7,4,11,14,5,30,0.00022,1.69798,0.00406,34.2251
-approx_adder_8,4,11,14,4,30,0.0003,2.19078,0.00444,41.9154
-approx_adder_9,4,11,14,4,30,0.00024,0.37226,0.00436,42.3559
+approx_adder_0, 4, 11, 14, 5, 29, 0.00018, 0.930567, 0.00436, 44.6853
+approx_adder_1, 4, 11, 14, 5, 30, 0.00012, 0.404199, 0.00456, 44.5068
+approx_adder_2, 4, 11, 14, 5, 30, 0.00022, 0.876494, 0.00466, 47.1325
+approx_adder_3, 4, 11, 14, 5, 30, 0.00022, 1.20617,  0.00398, 38.2297
+approx_adder_4, 4, 11, 14, 5, 30, 0.00026, 2.31022,  0.00402, 39.8364
+approx_adder_5, 4, 11, 14, 5, 30, 0.0002,  1.10821,  0.00454, 39.1604
+approx_adder_6, 4, 11, 14, 4, 30, 0.00032, 0.897359, 0.00422, 42.9969
+approx_adder_7, 4, 11, 14, 5, 30, 0.00026, 0.944931, 0.00414, 33.179
+approx_adder_8, 4, 11, 14, 4, 30, 0.00016, 0.869696, 0.00448, 43.6284
+approx_adder_9, 4, 11, 14, 4, 30, 0.00024, 1.29388,  0.00466, 48.6266
 ```
+
+Similarly, to generate a 16bit adder with split accuracy at the 8th bit (split position 7), minimum carry chain length for the low and the high part 4 and 9 respectively, 4 logic levels and fanout 3, we would execute the following command:
+
+```
+./adder_gen 16 7 4 9 4 3 1 approx_adder
+```
+
+The output of the console would be the following:
+
+```
+Generating csv file...
+Wrote results in approx_adder_report.csv
+Generating verilog files...
+Wrote verilog files in approx_adder_x.sv
+elapsed time: 2.75795s
+```
+
+The Verilog of the smallest adder will be generated in the file ``approx_adder_0.sv``.
+
+The characteristics of this adder can be found in the ``approx_adder_report.csv``.  In this case, the report contains information about the carry chains on each part of the adder as well as the split bit position.
+
+```
+adder,level,split-position,min-carry-chain-low,max-carry-chain-low,min-carry-chain-high,max-carry-chain-high,max-fanout,#operators,EF-uniform,MRE-uniform,EF-mixed,MRE-mixed
+
+approx_adder_0, 4, 7, 4, 6, 9, 9, 3, 21, 0.14368, 0.0815648, 0.14182, 1.10282
+```
+
+# 
 
 # Reference
 
