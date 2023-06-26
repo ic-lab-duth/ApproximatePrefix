@@ -15,7 +15,7 @@ using namespace std;
 
 vector<list<short int>> solutions;
 vector<short int> fo_vector;
-short int index = 3;        // starting adder
+short int index_add = 3;        // starting adder
 short int max_index;        // final adder
 int approx;                 // how many bits my adder looks back
 int split_position;         // position to split for split accuracy
@@ -56,16 +56,16 @@ int LSB(list<short int>& List, list<short int>::iterator& thisNode) {
   if (thisNode != List.begin()) thisIter--;
 
   for (list<short int>::iterator it = List.begin(); it != List.end(); it++) {
-    if (*it == index) cnt++;
+    if (*it == index_add) cnt++;
   }
 
   //CASE 1: no recentNodes yet
-  if (cnt == 0) return index;
+  if (cnt == 0) return index_add;
 
-  //CASE 2a: node!=index
+  //CASE 2a: node!=index_add
   else if (*thisIter == 1) return 0;
 
-  //CASE 2b: node!=index
+  //CASE 2b: node!=index_add
   else if (*thisIter == 2){
     int counter=0;
     for(list<short int>::iterator iter8=List.begin(); iter8!=List.end(); iter8++){
@@ -311,10 +311,10 @@ int max_depth(list<short int>& List5) {
 }
 
 void generate_txt() {
-  int keepIndex = index;
+  int keepIndex = index_add;
   int beginList = 0;
   string numFile  = to_string(global_counter);
-  string Index = to_string(index);
+  string Index = to_string(index_add);
   string filename = Index + "__" + "file" + numFile + ".txt";
 
   ofstream file;
@@ -331,7 +331,7 @@ void generate_txt() {
     }
     file<<"}\n";
   }
-  index = keepIndex;
+  index_add = keepIndex;
   file.close();
 
   solutions.clear();
@@ -349,24 +349,24 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
 
   // if you are at the base configuration:
   if (split_position == -1) {
-    if (index < approx) k = index;
+    if (index_add < approx) k = index_add;
     else k = approx;
   } else {
-    if (index <= split_position) {
+    if (index_add <= split_position) {
       // if you are in the low order part and under the approx spot, you are fully accurate
       // else take the approx_low as your min carry chain
-      if (index < approx_low) k = index;
+      if (index_add < approx_low) k = index_add;
       else k = approx_low;
     } else {
       // if you are in the high order part and under the approx spot, you are fully accurate until the split position
       // else take the approx_high as your min carry chain
-      if (index - split_position < approx_high) k = index - split_position;
+      if (index_add - split_position < approx_high) k = index_add - split_position;
       else k = approx_high;
     }
   }
   
 
-  if (*recentNode == index && lsb == 0) {
+  if (*recentNode == index_add && lsb == 0) {
     if (!flag4){
       if (solutions.size() >= 1000000){
         global_counter++;
@@ -374,7 +374,7 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
       }
       if (firstSolution == 0) {
         min_size = nodeList.size();
-        min_size_helper[index] = min_size;
+        min_size_helper[index_add] = min_size;
         firstSolution = 1;
       }
       fo_cnt = 0;
@@ -382,7 +382,7 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
       solution_number_for_bw++;
       if (nodeList.size() < min_size) {
         min_size = nodeList.size();
-        min_size_helper[index] = min_size;
+        min_size_helper[index_add] = min_size;
       }
     }
     return true;
@@ -390,7 +390,7 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
 
   searchIndex = lsb - 1;
   list<short int>::iterator newIter = nodeList.begin();
-  newIter = nodeList.insert(currIter, index);
+  newIter = nodeList.insert(currIter, index_add);
 
   fanout(nodeList, newIter); //for fanout calculation
 
@@ -401,7 +401,7 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
   flag4 = 0;
 
   for (list<short int>::iterator iter = nodeList.begin(); iter != nodeList.end(); iter++) {
-    if (*iter == index && (LSB(nodeList, iter) != 0)) R++;
+    if (*iter == index_add && (LSB(nodeList, iter) != 0)) R++;
     else R = 0;
 
     if (R > repeat) {
@@ -417,7 +417,7 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
 
   // last check sees if you are in the high part of split accuracy but you are looking to the low accuracy part
   if (depth(nodeList, newIter) > level || R == repeat + 2 || nodeList.size() > min_size+delta_pruning || 
-      (split_position != -1 && index > split_position && lsb2 < split_position)) {
+      (split_position != -1 && index_add > split_position && lsb2 < split_position)) {
     fo_cnt = 0; //for fanout pruning
     fanout_erase(nodeList, newIter); //for fanout calculation
     nodeList.erase(newIter);
@@ -425,19 +425,19 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
   }
   ///END OF PRUNING///
 
-  if ((*newIter == index) && (lsb2 <= index - k) && (lsb2 != 0) && (!flag4) && (index >= starting_acc)) {
+  if ((*newIter == index_add) && (lsb2 <= index_add - k) && (lsb2 != 0) && (!flag4) && (index_add >= starting_acc)) {
     if (solutions.size() >= 1000000){
       global_counter++;
       generate_txt();
     }
     if (firstSolution == 0) {
       min_size = nodeList.size();
-      min_size_helper[index] = min_size;
+      min_size_helper[index_add] = min_size;
       firstSolution = 1;
     }
     if (nodeList.size() < min_size){
       min_size = nodeList.size();
-      min_size_helper[index] = min_size;
+      min_size_helper[index_add] = min_size;
     }
     solutions.push_back(nodeList);
     solution_number_for_bw++;
@@ -461,12 +461,13 @@ bool buildRecursive(list<short int>& nodeList, list<short int>::iterator& recent
 
   if (flag3 == 1) return false; //case to avoid the infinite recursion
   buildRecursive(nodeList, recentNode, currIter);
+  return false;
 }
 
 void read_from_txt(int &j, unordered_map<int, unordered_map<int, unordered_map<int, int>>>& size_occurences, int& solutions_for_next_bit_width){
 
   string numFile  = to_string(j);
-  string Index = to_string(index-1);
+  string Index = to_string(index_add-1);
   string filename = Index + "__" + "file" + numFile + ".txt";
 
   ifstream myReadFile;
@@ -489,10 +490,10 @@ void read_from_txt(int &j, unordered_map<int, unordered_map<int, unordered_map<i
   for(auto& lis: mylist){
     Count++;
     if(Count < mylist.size()){
-      bool found_sol = false; // find_sol(lis, index -1);
+      bool found_sol = false; // find_sol(lis, index_add -1);
       int max_sol_depth = max_depth(lis);
       int max_fanout = get_max_fanout(lis);
-      if((lis.size() <= min_size_helper[index-1]+delta_pruning) && (size_occurences[lis.size()][max_sol_depth][max_fanout] < max_per_size)) { 
+      if((lis.size() <= min_size_helper[index_add-1]+delta_pruning) && (size_occurences[lis.size()][max_sol_depth][max_fanout] < max_per_size)) { 
         size_occurences[lis.size()][max_sol_depth][max_fanout]++;
         solutions_for_next_bit_width++;
         list<short int> List = lis;
@@ -518,7 +519,7 @@ void generateSolutions(list<short int>& List6, list<short int>::iterator& thisNo
 
   min_size_helper[2] = 3; //min size helper is used for remembering previous min sizes when reading from txt files
   min_size = 5555;        //random big value that will never be reached
-  cout << "Generating solutions for " << index + 1 << " bits: ";
+  // cout << "Generating solutions for " << index_add + 1 << " bits: ";
   solution_number_for_bw = 0;
   buildRecursive(List6, thisNode6, curIt);
 
@@ -531,13 +532,13 @@ void generateSolutions(list<short int>& List6, list<short int>::iterator& thisNo
   for(list<short int>::iterator it=List6.begin(); it!=List6.end(); it++) fanout(List6, it);
 
   buildRecursive(List6, thisNode6, curIt);
-  cout << solution_number_for_bw << " solutions generated." << endl;
+  // cout << solution_number_for_bw << " solutions generated." << endl;
 
-  index++;
+  index_add++;
 
-  while (index <= max_index) {
+  while (index_add <= max_index) {
     solution_number_for_bw = 0;
-    cout << "Generating solutions for " << index + 1 << " bits: ";
+    // cout << "Generating solutions for " << index_add + 1 << " bits: ";
     firstSolution  = 0;
     global_counter = 0;
     int solutions_for_next_bit_width = 0;
@@ -578,9 +579,9 @@ void generateSolutions(list<short int>& List6, list<short int>::iterator& thisNo
       read_from_txt(i, size_occurences, solutions_for_next_bit_width);
     } 
 
-    cout << solution_number_for_bw << " solutions generated." << endl;
+    // cout << solution_number_for_bw << " solutions generated." << endl;
     global_counter_2 = global_counter;
-    index++;
+    index_add++;
   }
 }
 
@@ -613,7 +614,12 @@ void print_csv(multiset<list<short int>, ListCmp>& adders_to_report) {
 
   int adder_index = 0;
 
-  file << "adder,level,min-carry-chain,max-carry-chain,max-fanout,#operators,EF-uniform,MRE-uniform,EF-mixed,MRE-mixed" << endl;
+  if (split_position == -1) {
+    file << "adder,level,min-carry-chain,max-carry-chain,max-fanout,#operators,EF-uniform,MRE-uniform,EF-mixed,MRE-mixed" << endl;
+  } else {
+    file << "adder,level,split-position,min-carry-chain-low,max-carry-chain-low,min-carry-chain-high,max-carry-chain-high,max-fanout,#operators,EF-uniform,MRE-uniform,EF-mixed,MRE-mixed" << endl;
+  }
+  
 
   for(auto it = adders_to_report.begin(); it != adders_to_report.end(); ++it) {
     list<short int> sol = *it;
@@ -634,7 +640,7 @@ void print_csv(multiset<list<short int>, ListCmp>& adders_to_report) {
           }
         }
         if (flag == 0) {
-          index = *node;
+          index_add = *node;
           level = depth(sol,node);
           if (level > max_level) max_level=level;
         }
@@ -644,28 +650,64 @@ void print_csv(multiset<list<short int>, ListCmp>& adders_to_report) {
     vector<float> errors(4, 0.0);
     print_ER(sol, errors);
 
+
     int min_carry_chain = max_index + 1;
     int max_carry_chain = -1;
-    for (int i = 1; i <= max_index; i++) {
-      for (auto n = sol.end(); n-- != sol.begin();) {
-        if (*n == i) {
-          int lsb = LSB(sol, n);
-          int carry_chain =  i - lsb + 1;
-          if (carry_chain < min_carry_chain && lsb != 0) {
-            min_carry_chain = carry_chain;
+    int min_carry_chain_low = split_position + 1;
+    int max_carry_chain_low = -1;
+    int min_carry_chain_high = max_index - split_position + 1;
+    int max_carry_chain_high = -1;
+
+    if (split_position == -1) {
+      for (int i = 1; i <= max_index; i++) {
+        for (auto n = sol.end(); n-- != sol.begin();) {
+          if (*n == i) {
+            int lsb = LSB(sol, n);
+            int carry_chain =  i - lsb + 1;
+            if (carry_chain < min_carry_chain && lsb != 0) {
+              min_carry_chain = carry_chain;
+            }
+            if (carry_chain > max_carry_chain) {
+              max_carry_chain = carry_chain;
+            }
+            break;
           }
-          if (carry_chain > max_carry_chain) {
-            max_carry_chain = carry_chain;
+        }
+      }
+    } else {
+      for (int i = 1; i <= max_index; i++) {
+        for (auto n = sol.end(); n-- != sol.begin();) {
+          if (*n == i) {
+            int lsb = LSB(sol, n);
+            int carry_chain =  i - lsb + 1;
+            if (i <= split_position) {
+              if (carry_chain < min_carry_chain_low && lsb > 0) {
+                min_carry_chain_low = carry_chain;
+              }
+              if (carry_chain > max_carry_chain_low) {
+                max_carry_chain_low = carry_chain;
+              }
+            } else {
+              if (carry_chain < min_carry_chain_high && lsb > split_position) {
+                min_carry_chain_high = carry_chain;
+              }
+              if (carry_chain > max_carry_chain_high) {
+                max_carry_chain_high = carry_chain;
+              }
+            }
+            break;
           }
-          break;
         }
       }
     }
-
-
+    
     ///PRINT CHARACTERISTICS
     file << nameFile << "_" << adder_index << "," << max_level << ",";
-    file << min_carry_chain << "," << max_carry_chain << ",";
+    if (split_position == -1) {
+      file << min_carry_chain << "," << max_carry_chain << ",";
+    } else {
+      file << split_position << "," << min_carry_chain_low << "," << max_carry_chain_low << "," << min_carry_chain_high << "," << max_carry_chain_high << ",";
+    }
     file << max_fanout << ","; 
     file << sol.size() << ",";
     file << errors[0] << "," << errors[1] << "," << errors[2] << "," << errors[3] << endl;
@@ -706,17 +748,18 @@ void print_ER(list<short int>& adder, vector<float>& error_rates) {
       float coin = dist_coin(gen);
       int a, b;
       if (coin < uniform_chance) {
-        a = dist(gen);
-        b = dist(gen);
+        do {
+          a = dist(gen);
+          b = dist(gen);
+        } while (a + b > max_limit || a + b < min_limit); 
       } else {
-        a = round(dist_norm(gen));
-        b = round(dist_norm(gen));
-        while(a > (long) pow(2, max_index) - 1 || a < (long) -pow(2, max_index)) {
+        do {
           a = round(dist_norm(gen));
-        }
-        while(b > (long) pow(2, max_index) - 1 || b < (long) -pow(2, max_index)) {
           b = round(dist_norm(gen));
-        }
+        } while ((a > max_limit || a < min_limit) ||
+                 (b > max_limit || b < min_limit) ||
+                 (a + b > max_limit || a + b < min_limit));
+        
       }
       int sum = add.calculate_sum(a, b);
       int true_sum = a + b;
@@ -752,7 +795,7 @@ void generate_verilog(const list<short int>& adder, string& adder_name) {
   file<<"module " << adder_name << "\n(\n";
   file<<" input logic ["<<n-1<<":0] A,\n";
   file<<" input logic ["<<n-1<<":0] B,\n";
-  file<<" output logic ["<<n<<":0] S\n);\n\n";
+  file<<" output logic ["<<n-1<<":0] S\n);\n\n";
 
   file<<" logic ["<<n-1<<":0] P;\n";
   file<<" logic ["<<n-1<<":0] G;\n";
@@ -838,7 +881,6 @@ void generate_verilog(const list<short int>& adder, string& adder_name) {
   for(int i=1; i<n; i++) {
     file<<"assign S["<<i<<"] = P["<<i<<"] ^ G_new["<<i-1<<"];\n";
   }
-  file<<"assign S["<<n<<"] = G_new["<<n-1<<"] ^ A[" << n-1 << "] ^ B[" << n-1 << "];\n";
   file<<"\nendmodule";
   file.close();
 }
@@ -918,7 +960,7 @@ int main(int argc, char** argv) {
 
   generateSolutions(List, lastNode, arrow);
 
-  index = max_index;
+  index_add = max_index;
 
   //put the vector in a file
   global_counter++;
@@ -994,7 +1036,7 @@ int main(int argc, char** argv) {
         }
       }
     }
-    index = max_index;
+    index_add = max_index;
     // file_counter++;
     // print_characteristics(file_counter, last_sols);
     last_sols.clear();
@@ -1015,18 +1057,18 @@ int main(int argc, char** argv) {
   }  
   cout << "Wrote verilog files in " << nameFile << "_x.sv" << endl;
 
-  cout << "Final solution number after pruning: "   << cnt_of_sols << endl;
-
-
-  cout << "adder size -> # solutions with this size" << endl;
-  for (auto& it : size_map) {
-    cout << it.first << " -> " << it.second << endl;
-  }
+  // cout << "Final solution number after pruning: "   << cnt_of_sols << endl;
+  // cout << "adder size -> # solutions with this size" << endl;
+  // for (auto& it : size_map) {
+  //   cout << it.first << " -> " << it.second << endl;
+  // }
 
   auto end = chrono::steady_clock::now();
   chrono::duration<double> elapsed_seconds = end - start;
-  cout << "elapsed time: " << elapsed_seconds.count()/60 << "m\n";
-  cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+  if (elapsed_seconds.count()/60 > 1)
+    cout << "elapsed time: " << elapsed_seconds.count()/60 << "m\n";
+  else
+    cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
 
   return 0;
 }

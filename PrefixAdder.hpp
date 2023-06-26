@@ -208,7 +208,7 @@ public:
 		std::vector<bool> A = signed_inputs ? dec_to_bin_signed(dec_A, bit_num) : dec_to_bin_unsigned(dec_A, bit_num); 
 		std::vector<bool> B = signed_inputs ? dec_to_bin_signed(dec_B, bit_num) : dec_to_bin_unsigned(dec_B, bit_num); 
 
-		std::vector<bool> S(bit_num+1);
+		std::vector<bool> S(bit_num);
 
 		std::vector<bool> p_bits(bit_num);
 		std::vector<bool> g_bits(bit_num);
@@ -264,7 +264,6 @@ public:
 
 		Node* last_node = node_per_column[bit_num - 1][node_per_column[bit_num - 1].size() - 1];
 		bool g_prev = node_g[last_node];
-		S[bit_num] = g_prev ^ A[bit_num - 1] ^ B[bit_num - 1];
 
 		int S_dec = signed_inputs ? bin_to_dec_signed(S) : bin_to_dec_unsigned(S);
 		return S_dec;
