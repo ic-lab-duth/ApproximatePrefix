@@ -176,11 +176,15 @@ This work has been accepted for publication in IEEE Transactions on VLSI Systems
 
 ```
 @article{synthApprox,
-  title={{Synthesis of Approximate Parallel Prefix Adders}},
-  author={Stefanidis, Apostolos and Zoumpoulidou, Ioanna and Filippas, Dionysios and Dimitrakopoulos, Giorgos and Sirakoulis, Georgios},
-  journal={IEEE Transactions on Very Large Scale Integration (VLSI) Systems},
-  year={2023}
-}
+  author={Stefanidis, Apostolos and Zoumpoulidou, Ioanna and Filippas, Dionysios and Dimitrakopoulos, Giorgos and Sirakoulis, Georgios Ch.},
+  journal={IEEE Transactions on Very Large Scale Integration (VLSI) Systems}, 
+  title={Synthesis of Approximate Parallel-Prefix Adders}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1-14},
+  doi={10.1109/TVLSI.2023.3287631}}
+
 ```
 
 ## Contributors
